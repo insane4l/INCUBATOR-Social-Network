@@ -1,0 +1,29 @@
+.dialogs {
+    display: grid;
+    grid-template-columns: 2fr 10fr;
+}
+
+.usersList {
+    padding: 10px;
+    background-color: rgba(0,0,0, .1);
+}
+
+.messages {
+    padding: 10px;
+}
+
+.user, .activeUser {
+    display: block;
+    margin-bottom: 6px;
+    color: rgb(20, 20, 146);
+    text-decoration: none;
+}
+
+.activeUser {
+    font-weight: 900;
+}
+
+.message {
+    color: #666;
+    padding: 2px;
+}

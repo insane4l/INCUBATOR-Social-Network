@@ -1,0 +1,20 @@
+.postList {
+  width: 600px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: rgba(4, 0, 241, 0.1);
+}
+.itemsList {
+  margin-top: 20px;
+}
+
+.postListForm {
+
+}
+
+.postAddForm textarea {
+  display: block;
+  width: 300px;
+  height: 60px;
+  resize: none;
+}

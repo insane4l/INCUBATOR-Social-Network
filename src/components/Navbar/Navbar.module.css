@@ -1,0 +1,20 @@
+.nav {
+    grid-area: n;
+    display: flex;
+    flex-direction: column;
+    background-color: green;
+}
+
+.link, .activelink {
+  display: inline-block;
+  width: 50%;
+  color: #fff;
+  text-decoration: none;
+  padding-bottom: 3px;
+  margin-bottom: 6px;
+}
+
+.activelink {
+  font-weight: 900;
+  border-bottom: 1px solid red;
+}
