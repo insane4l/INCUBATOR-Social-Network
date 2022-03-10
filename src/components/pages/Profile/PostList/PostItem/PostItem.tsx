@@ -16,6 +16,6 @@ export default PostItem
 
 type PostItemPropsType = {
 	userImg?: string
-	postText: string
+	postText: string | undefined
 	likesCounter: number
 }

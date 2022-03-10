@@ -1,56 +1,52 @@
-import React from "react"
+import React, { createRef } from "react"
+import { connect } from "react-redux"
 import { NavLink } from "react-router-dom"
+import { DialogMessageType, DialogsUserType, sendMessageAC, setNewMessageBodyAC } from "../../../redux/dialogsReducer"
+import { AppStateType } from "../../../redux/store"
 import s from './Dialogs.module.css'
 
-const Dialogs: React.FC = () => {
-
-	const users = [
-		{name: 'Dmitry', id: 1},
-		{name: 'Roman', id: 2},
-		{name: 'Victor', id: 3},
-		{name: 'Alex', id: 4},
-	]
-
-	const userMessages = [
-		{message: 'Hello!', id: 1},
-		{message: 'How are you?', id: 2},
-		{message: 'Lets do that project what we talk about', id: 3},
-		{message: 'It might help other people', id: 4},
-		{message: 'Yeah great idea', id: 5}
-	]
-
+const Dialogs: React.FC<DialogsPropsType> = ({users, userMessages, newMessageBody, setNewMessageBody, sendMessage}) => {
 
 
 	return (
 		<div className={s.dialogs}>
 			<div className={s.usersList}>
-				{users.map(el => <User key={el.id} name={el.name} userId={el.id} />)}
+				{users.map(el => <User key={el.id} name={el.name} id={el.id} />)}
 			</div>
 
 			<div className={s.messages}>
-				{userMessages.map(el => <Message key={el.id} text={el.message} />)}
+				{userMessages.map(el => <Message key={el.id} message={el.message} />)}
+				<textarea value={newMessageBody} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewMessageBody(e.currentTarget.value)}></textarea>
+				<button onClick={sendMessage}>Send Message</button>
 			</div>
 		</div>
 	)
 }
 
-const Message: React.FC<MessagePropsType> = ({text}) => {
-	return <div className={s.message}>{text}</div>
+const Message: React.FC<MessagePropsType> = ({message}) => {
+	return <div className={s.message}>{message}</div>
 }
 
-const User: React.FC<UserPropsType> = ({name, userId}) => {
-	return <NavLink className={({ isActive }) => isActive ? s.activeUser : s.user} to={`${userId}`}>{name}</NavLink>
+const User: React.FC<UserPropsType> = ({name, id}) => {
+	return <NavLink className={({ isActive }) => isActive ? s.activeUser : s.user} to={`${id}`}>{name}</NavLink>
 }
 
-export default Dialogs
+const mapStateToProps = (state: AppStateType) => ({
+	users: state.dialogsPage.users,
+	userMessages: state.dialogsPage.userMessages,
+	newMessageBody: state.dialogsPage.newMessageBody
+})
 
 
+export default connect(mapStateToProps, {sendMessage: sendMessageAC, setNewMessageBody: setNewMessageBodyAC})(Dialogs);
 
-type MessagePropsType = {
-	text: string
+type DialogsPropsType = {
+	users: DialogsUserType[]
+	userMessages: DialogMessageType[]
+	newMessageBody: string
+	setNewMessageBody: (message: string) => void
+	sendMessage: () => void
 }
 
-type UserPropsType = {
-	name: string
-	userId: number
-}
+type MessagePropsType = {message: string};
+type UserPropsType = DialogsUserType;
