@@ -5,6 +5,7 @@ import Profile from './components/pages/Profile/Profile'
 import './App.css'
 import Dialogs from './components/pages/Dialogs/Dialogs'
 import { Route, Routes } from 'react-router-dom'
+import Users from './components/pages/Users/Users'
 
 function App(): React.ReactElement {
 	return (
@@ -15,6 +16,7 @@ function App(): React.ReactElement {
 					<Routes>
 						<Route path="/profile/" element={<Profile />}/>
 						<Route path="/dialogs/*" element={<Dialogs />}/>
+						<Route path="/users" element={<Users />}/>
 					</Routes>
 			</div>
 		</div>

@@ -1,0 +1,46 @@
+.users__list {
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px;
+}
+
+.users__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 400px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0,0,0, .2);
+    border-radius: 8px;
+}
+
+.user__photo {
+    width: 60px;
+    height: 60px;
+}
+
+.user__details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user__info { 
+
+}
+
+.user__name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.user__status {
+    font-size: 16px;
+    color: #444;
+}
+
+.selected_page {
+    font-weight: 900;
+}

@@ -7,6 +7,7 @@ const Navbar: React.FC = () => {
 	let links = [
 		{title: 'Profile', path: '/profile'},
 		{title: 'Dialogs', path: '/dialogs'},
+		{title: 'Users', path: '/users'},
 		{title: 'News', path: '/news'},
 		{title: 'Music', path: '/music'},
 		{title: 'Settings', path: '/settings'}
