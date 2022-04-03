@@ -3,5 +3,22 @@
 }
 
 .descrBlock {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
+}
+
+.profileImg {
+    width: 100px;
+    height: 100px;
+}
+
+.profileName {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.profileStatus {
+    font-size: 14px;
 }

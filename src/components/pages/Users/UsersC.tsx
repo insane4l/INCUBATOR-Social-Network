@@ -2,21 +2,23 @@ import axios from 'axios';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AppStateType } from '../../../redux/store';
-import { toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount, UserType } from '../../../redux/usersReducer';
-import s from './Users.module.css';
+import { toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount, setLoadingStatus, UserType } from '../../../redux/usersReducer';
+import Users from './Users';
 
 class UsersC extends React.Component<UsersPropsType> {
 
     constructor(props: UsersPropsType) {
         super(props);
-
+        
         // this.toggleFollowed = this.toggleFollowed.bind(this);
     }
 
     componentDidMount() {
+        this.props.setLoadingStatus(true);
         axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`).then(response => {
             this.props.setUsers(response.data.items);
             this.props.setTotalUsersCount(response.data.totalCount);
+            this.props.setLoadingStatus(false); 
         });
     }
 
@@ -25,76 +27,42 @@ class UsersC extends React.Component<UsersPropsType> {
     }
 
     onPageChanged = (pageNumber: number) => {
-
+        this.props.setLoadingStatus(true);
         this.props.setCurrentPage(pageNumber);
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`).then(response => {
-            this.props.setUsers(response.data.items);
-        })
+        axios
+            .get(`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`)
+            .then(response => {
+                this.props.setUsers(response.data.items);
+                this.props.setLoadingStatus(false); 
+            })
     }
 
     render() {
-
-        let pagesCount = Math.ceil( this.props.totalUsersCount / this.props.pageSize );
-        let pages = [];
-
-        for (let i = 1; i <= pagesCount; i++) {
-            pages.push(i);
-        }
-
         return (
-            <>
-
-            {
-                pages.map(p => (
-                    <span 
-                        className={this.props.currentPage === p ? s.selected_page : ''}
-                        onClick={() => this.onPageChanged(p)}>
-                        {p}
-                    </span>
-                ))
-            }
-
-            <div className={s.users__list}>
-                {
-                    this.props.users.map(el => (
-                        <div className={s.users__item}>
-                            <img className={s.user__photo} src={el.photos.small || 'https://i.pinimg.com/originals/13/a4/11/13a411076cdee39085cad97da215d9be.png'} alt="user_photo" />
-                            <div className={s.user__details}>
-                                <div className={s.user__info}>
-                                    <div className={s.user__name}>
-                                        {el.name}
-                                    </div>
-                                    <div className={s.user__status}>
-                                        {el.status}
-                                    </div>
-                                </div>
-
-                                
-                                <button onClick={() => this.toggleFollowed(el.id)}> 
-                                    {el.followed ? 'Unfollow' : 'Follow'}
-                                </button>
-
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
-            </>
+            <Users
+                pageSize={this.props.pageSize}
+                totalUsersCount={this.props.totalUsersCount}
+                currentPage={this.props.currentPage}
+                users={this.props.users}
+                isLoading={this.props.isLoading}
+                onPageChanged={this.onPageChanged}
+                toggleFollowed={this.toggleFollowed}/>
         )
     }
 }
 
 
 
-const mapStateToProps = (state: any) => ({ // todo: fix any - AppStateType
+const mapStateToProps = (state: AppStateType): MapStatePropsType => ({
     users: state.usersPage.users,
     pageSize: state.usersPage.pageSize,
     totalUsersCount: state.usersPage.totalUsersCount,
-    currentPage: state.usersPage.currentPage
+    currentPage: state.usersPage.currentPage,
+    isLoading: state.usersPage.isLoading
 })
 
 
-export default connect<MapStatePropsType, MapDispatchPropsType>(mapStateToProps, {toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount})(UsersC);
+export default connect(mapStateToProps, {toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount, setLoadingStatus})(UsersC);
 
 
 
@@ -104,12 +72,14 @@ type MapStatePropsType = {
     pageSize: number
     totalUsersCount: number
     currentPage: number
+    isLoading: boolean
 }
 type MapDispatchPropsType = {
     toggleFollowedStatus: (id: number) => void
     setUsers: (users: Array<UserType>) => void
     setCurrentPage: (page: number) => void
     setTotalUsersCount: (count: number) => void
+    setLoadingStatus: (isLoading: boolean) => void
 }
 
 type UsersPropsType = MapStatePropsType & MapDispatchPropsType
