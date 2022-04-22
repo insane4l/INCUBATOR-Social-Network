@@ -1,7 +1,21 @@
 .header {
-    grid-area: h;
-    background-color: blue;
-  }
-  .header img {
-    width: 20px;
-  }
+	grid-area: h;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+	background-color: blue;
+}
+.header img {
+	width: 20px;
+}
+
+.loginBlock {
+	color: #fff;
+	font-weight: bold;
+}
+
+.loginBtn {
+	text-decoration: none;
+	color: inherit;
+}

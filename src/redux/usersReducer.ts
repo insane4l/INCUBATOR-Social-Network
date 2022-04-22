@@ -1,3 +1,6 @@
+import { Dispatch } from "react"
+import { usersAPI } from "../api/usersAPI"
+
 export type UserType = {
     name: string
     id: number
@@ -15,7 +18,8 @@ let initialState = {
     pageSize: 10,
     totalUsersCount: 0,
     currentPage: 1,
-    isLoading: false
+    isLoading: false,
+    followingInProgress: [] as Array<number>,
 };
 type InitialStateType = typeof initialState;
 
@@ -47,13 +51,20 @@ const usersReducer = (state = initialState, action: ActionsType): InitialStateTy
                 ...state,
                 isLoading: action.payload.isLoading
             }
+		case 'sn/users/SET_FOLLOWING_IN_PROGRESS':
+			return {
+                ...state,
+                followingInProgress: action.payload.isInProgress 
+                    ? [...state.followingInProgress, action.payload.userId]
+                    : state.followingInProgress.filter(id => id !== action.payload.userId)
+            }
 		default:
 			return state;
 	}
 };
 type ActionsType = ReturnType<typeof setUsers> | ReturnType<typeof toggleFollowedStatus>
 | ReturnType<typeof setCurrentPage> | ReturnType<typeof setTotalUsersCount>
-| ReturnType<typeof setLoadingStatus>;
+| ReturnType<typeof setLoadingStatus> | ReturnType<typeof setFollowingInProgress>;
 
 export const setUsers = (users: Array<UserType>) => ({type: 'sn/users/SET_USERS_LIST' as const, payload: {users}});
 
@@ -64,5 +75,44 @@ export const setTotalUsersCount = (num: number) => ({type: 'sn/users/SET_TOTAL_U
 export const toggleFollowedStatus = (userId: number) => ({type: 'sn/users/TOGGLE_USER_FOLLOWED_STATUS' as const, payload: {userId}});
 
 export const setLoadingStatus = (isLoading: boolean) => ({type: 'sn/users/SET_LOADING_STATUS' as const, payload: {isLoading}});
+
+export const setFollowingInProgress = (userId: number, isInProgress: boolean) => ({type: 'sn/users/SET_FOLLOWING_IN_PROGRESS' as const, payload: {userId, isInProgress}});
+
+
+
+
+
+
+export const getUsers = (pageNumber: number, pageSize: number) => (dispatch: any) => {
+    dispatch( setLoadingStatus(true) )
+        usersAPI.getUsers(pageNumber, pageSize)
+            .then(data => {
+                dispatch( setUsers(data.items) )
+                dispatch( setTotalUsersCount(data.totalCount) )
+                dispatch( setLoadingStatus(false) )
+            });
+}
+
+
+
+
+export const toggleFollowed = (userId: number, isFollowed: boolean) => (dispatch: any) => {
+    dispatch( setFollowingInProgress(userId, true) )
+
+    let apiResponse;
+
+    if (isFollowed) {
+        apiResponse = usersAPI.unfollow(userId);
+    } else {
+        apiResponse = usersAPI.follow(userId);
+    }
+
+    apiResponse.then(data => {
+        if (data.resultCode === 0) {
+            dispatch(toggleFollowedStatus(userId));
+            dispatch(setFollowingInProgress(userId, false));
+        }
+    });
+}
 
 export default usersReducer;

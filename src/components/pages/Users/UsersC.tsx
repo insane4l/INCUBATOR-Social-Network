@@ -1,8 +1,7 @@
-import axios from 'axios';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AppStateType } from '../../../redux/store';
-import { toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount, setLoadingStatus, UserType } from '../../../redux/usersReducer';
+import { toggleFollowed, setCurrentPage, UserType, getUsers } from '../../../redux/usersReducer';
 import Users from './Users';
 
 class UsersC extends React.Component<UsersPropsType> {
@@ -14,27 +13,12 @@ class UsersC extends React.Component<UsersPropsType> {
     }
 
     componentDidMount() {
-        this.props.setLoadingStatus(true);
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`).then(response => {
-            this.props.setUsers(response.data.items);
-            this.props.setTotalUsersCount(response.data.totalCount);
-            this.props.setLoadingStatus(false); 
-        });
-    }
-
-    toggleFollowed = (id: number) => {
-        this.props.toggleFollowedStatus(id);
+        this.props.getUsers(this.props.currentPage, this.props.pageSize);
     }
 
     onPageChanged = (pageNumber: number) => {
-        this.props.setLoadingStatus(true);
         this.props.setCurrentPage(pageNumber);
-        axios
-            .get(`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`)
-            .then(response => {
-                this.props.setUsers(response.data.items);
-                this.props.setLoadingStatus(false); 
-            })
+        this.props.getUsers(pageNumber, this.props.pageSize);
     }
 
     render() {
@@ -46,7 +30,8 @@ class UsersC extends React.Component<UsersPropsType> {
                 users={this.props.users}
                 isLoading={this.props.isLoading}
                 onPageChanged={this.onPageChanged}
-                toggleFollowed={this.toggleFollowed}/>
+                toggleFollowed={this.props.toggleFollowed} 
+                followingInProgress={this.props.followingInProgress} />
         )
     }
 }
@@ -58,11 +43,12 @@ const mapStateToProps = (state: AppStateType): MapStatePropsType => ({
     pageSize: state.usersPage.pageSize,
     totalUsersCount: state.usersPage.totalUsersCount,
     currentPage: state.usersPage.currentPage,
-    isLoading: state.usersPage.isLoading
+    isLoading: state.usersPage.isLoading,
+    followingInProgress: state.usersPage.followingInProgress,
 })
 
 
-export default connect(mapStateToProps, {toggleFollowedStatus, setUsers, setCurrentPage, setTotalUsersCount, setLoadingStatus})(UsersC);
+export default connect(mapStateToProps, {toggleFollowed, setCurrentPage, getUsers})(UsersC);
 
 
 
@@ -73,13 +59,12 @@ type MapStatePropsType = {
     totalUsersCount: number
     currentPage: number
     isLoading: boolean
+    followingInProgress: Array<number>
 }
 type MapDispatchPropsType = {
-    toggleFollowedStatus: (id: number) => void
-    setUsers: (users: Array<UserType>) => void
+    toggleFollowed: (id: number, isFollowed: boolean) => void
     setCurrentPage: (page: number) => void
-    setTotalUsersCount: (count: number) => void
-    setLoadingStatus: (isLoading: boolean) => void
+    getUsers: (pageNumber: number, pageSize: number) => void
 }
 
 type UsersPropsType = MapStatePropsType & MapDispatchPropsType

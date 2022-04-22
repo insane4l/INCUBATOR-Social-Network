@@ -12,7 +12,7 @@ const Profile: React.FC<ProfilePropsType> = (props) => {
 				!props.profile
 					? <Spinner/>
 					: <>
-						<ProfileInfo profile={props.profile}/>
+						<ProfileInfo profile={props.profile} profileStatus={props.profileStatus} updateStatus={props.updateStatus}/>
 						<PostList />
 					</>
 			}
@@ -25,4 +25,6 @@ export default Profile;
 
 type ProfilePropsType ={
     profile: ProfileType | null
+	profileStatus: string
+	updateStatus: (message: string) => void
 }

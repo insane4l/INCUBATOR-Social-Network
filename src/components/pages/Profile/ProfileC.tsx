@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { ProfileType, setUserProfile } from '../../../redux/profileReducer';
+import { getProfile, getProfileStatus, ProfileType, setUserProfile, updateProfileStatus } from '../../../redux/profileReducer';
 import { AppStateType } from '../../../redux/store';
+import { withRedirect } from '../../common/withRedirect';
 import Profile from './Profile';
 
 // 59 lesson (60 lesson cant do like in video course because of react-router-dom v6 have not withRouter HOC)
@@ -44,21 +45,31 @@ const ProfileC = () => {
 
     const dispatch = useDispatch();
     const profile = useSelector<AppStateType, ProfileType | null>(state => state.profilePage.selectedProfile);
+    const profileStatus = useSelector<AppStateType, string>(state => state.profilePage.profileStatus);
+    const error = useSelector<AppStateType, string>(state => state.profilePage.profileError);
     const userId = useParams()?.userId;
-
+    
     useEffect(() => {
         if (userId) {
-            axios.get(`https://social-network.samuraijs.com/api/1.0/profile/${userId}`).then(response => {
-                dispatch( setUserProfile(response.data) );
-            });
+            dispatch( getProfile(+userId) )
+            dispatch( getProfileStatus(+userId) )
         }
-    }, [userId])
+    }, [userId, dispatch])
 
+    const updateStatus = (message: string) => {
+        dispatch( updateProfileStatus(message) )
+    }
+    
 
     return (
-        <Profile profile={profile} />
+        <>
+            {error 
+                ? <div>{error}</div>
+                : <Profile profile={profile} profileStatus={profileStatus} updateStatus={updateStatus}/>
+            }
+        </>
     )
 }
 
 
-export default ProfileC;
+export default withRedirect(ProfileC);

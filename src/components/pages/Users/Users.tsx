@@ -44,7 +44,7 @@ const Users: React.FC<UsersPropsType> = (props) => {
                                     </div>
 
 
-                                    <button onClick={() => props.toggleFollowed(el.id)}>
+                                    <button className={s.followBtn} onClick={() => props.toggleFollowed(el.id, el.followed)} disabled={props.followingInProgress.some(id => id === el.id)}>
                                         {el.followed ? 'Unfollow' : 'Follow'}
                                     </button>
 
@@ -69,6 +69,7 @@ type UsersPropsType = {
     currentPage: number
     users: UserType[]
     isLoading: boolean
+    followingInProgress: Array<number>
     onPageChanged: (pageNum: number) => void
-    toggleFollowed: (userId: number) => void
+    toggleFollowed: (userId: number, isFollowed: boolean) => void
 }

@@ -1,3 +1,4 @@
+import { profileAPI } from "../api/profileAPI"
 
 export type ProfileContactsType = {
     github: string | undefined
@@ -33,7 +34,9 @@ let initialState = {
 	    { text: "My second post.", likesCount: 0, id: 2 },
 	    { text: "Add me to friends", likesCount: 6, id: 3 }
     ],
-    newPostText: ''
+    newPostText: '',
+    profileError: '',
+    profileStatus: '',
 };
 type InitialStateType = typeof initialState;
 export type ProfilePostsType = typeof initialState.posts;
@@ -57,12 +60,23 @@ const profileReducer = (state = initialState, action: ActionsType): InitialState
                 posts: [...state.posts, {text: state.newPostText, likesCount: 0, id: 55}],
                 newPostText: ''
             }
+		case 'sn/profile/SET_PROFILE_ERROR':
+			return {
+                ...state,
+                profileError: action.error
+            }
+		case 'sn/profile/SET_PROFILE_STATUS':
+			return {
+                ...state,
+                profileStatus: action.statusMessage
+            }
 		default:
 			return state;
 	}
 };
 type ActionsType = ReturnType<typeof addPostAC> | ReturnType<typeof setNewPostMessageAC>
-| ReturnType<typeof setUserProfile>;
+| ReturnType<typeof setUserProfile> | ReturnType<typeof setProfileError>
+| ReturnType<typeof setProfileStatus>;
 
 export const setUserProfile = (profile: any) => ({type: 'sn/profile/SET_USER_PROFILE', payload: {profile}} as const);
 
@@ -70,5 +84,41 @@ export const addPostAC = () => ({type: 'sn/profile/ADD_POST'} as const);
 
 export const setNewPostMessageAC = (message: string) => ({type: 'sn/profile/SET_NEW_POST_MESSAGE', message} as const);
 
+export const setProfileError = (error: string) => ({type: 'sn/profile/SET_PROFILE_ERROR', error} as const);
+
+export const setProfileStatus = (statusMessage: string) => ({type: 'sn/profile/SET_PROFILE_STATUS', statusMessage} as const);
+
+
+
+
+
+export const getProfile = (userId: number) => (dispatch: any) => {
+    setProfileError('');
+
+    profileAPI.getProfile(userId)
+        .then(data => dispatch(setUserProfile(data)) )
+        .catch(error => {
+
+            if (error.response && error.response.status === 400) {
+                dispatch( setProfileError(`User not found (wrong id)`) )
+            } else {
+                dispatch( setProfileError(`${error}`) )
+            }
+        });
+}
+
+
+export const getProfileStatus = (userId: number) => (dispatch: any) => {
+    profileAPI.getProfileStatus(userId)
+        .then(status => dispatch(setProfileStatus(status)) )
+}
+export const updateProfileStatus = (message: string) => (dispatch: any) => {
+    profileAPI.setProfileStatus(message)
+        .then(res => {
+            if (res.resultCode === 0) {
+                dispatch(setProfileStatus(message));
+            }
+        })
+}
 
 export default profileReducer;
