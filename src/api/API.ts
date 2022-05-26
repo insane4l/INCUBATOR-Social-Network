@@ -15,6 +15,10 @@ export enum ResultCodesEnum {
     Error = 1
 }
 
+export enum ResultCodeForCaptchaEnum {
+    CaptchaIsRequired = 10
+}
+
 export type ResponseType<D = {}, RC = ResultCodesEnum> = {
     data: D
     resultCode: RC

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getUserAuthData } from '../../redux/authReducer';
 import { AppStateType } from '../../redux/store';
+import { getAuthUserLogin, getIsUserAuthorized } from '../../selectors/authSelectors';
 import Header from './Header';
 
 
@@ -17,8 +18,8 @@ class HeaderC extends React.Component<HeaderCPropsType> {
 }
 
 const mapStateToProps = (state: AppStateType) => ({
-    isUserAuthorized: state.auth.isUserAuthorized,
-    login: state.auth.login
+    isUserAuthorized: getIsUserAuthorized(state),
+    login: getAuthUserLogin(state)
 });
 
 export default connect(mapStateToProps, {getUserAuthData})(HeaderC);

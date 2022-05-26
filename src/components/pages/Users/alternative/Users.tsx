@@ -3,17 +3,18 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppStateType } from '../../../../redux/store';
 import { setCurrentPage, setTotalUsersCount, setUsers, toggleFollowedStatus, UserType } from '../../../../redux/usersReducer';
+import * as usersSelectors from '../../../../selectors/usersSelectors';
 import s from './Users.module.css';
 
 const Users = () => {
 
     const dispatch = useDispatch();
 
-    const users = useSelector((state: AppStateType) => state.usersPage.users);
+    const users = useSelector(usersSelectors.getUsers);
 
-    const pageSize = useSelector((state: AppStateType) => state.usersPage.pageSize);
-    const totalUsersCount = useSelector((state: AppStateType) => state.usersPage.totalUsersCount);
-    const currentPage = useSelector((state: AppStateType) => state.usersPage.currentPage);
+    const pageSize = useSelector(usersSelectors.getPageSize);
+    const totalUsersCount = useSelector(usersSelectors.getTotalUsersCount);
+    const currentPage = useSelector(usersSelectors.getCurrentPage);
     const pagesCount = Math.ceil(totalUsersCount / pageSize);
 
     useEffect(() => {

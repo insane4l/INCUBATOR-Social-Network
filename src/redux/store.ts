@@ -4,13 +4,15 @@ import dialogsReducer from "./dialogsReducer";
 import profileReducer from "./profileReducer";
 import usersReducer from "./usersReducer";
 import thunkMiddleware from 'redux-thunk';
+import appReducer from "./appReducer";
 
 
 const rootReducer = combineReducers({
     profilePage: profileReducer,
     dialogsPage: dialogsReducer,
     usersPage: usersReducer,
-    auth: authReducer
+    auth: authReducer,
+    app: appReducer,
 });
 
 type ReducersType = typeof rootReducer;

@@ -4,6 +4,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getProfile, getProfileStatus, ProfileType, setUserProfile, updateProfileStatus } from '../../../redux/profileReducer';
 import { AppStateType } from '../../../redux/store';
+import { getProfileError, getSelectedProfile, getSelectedProfileStatus } from '../../../selectors/profileSelectors';
 import { withRedirect } from '../../common/withRedirect';
 import Profile from './Profile';
 
@@ -44,10 +45,19 @@ import Profile from './Profile';
 const ProfileC = () => {
 
     const dispatch = useDispatch();
-    const profile = useSelector<AppStateType, ProfileType | null>(state => state.profilePage.selectedProfile);
-    const profileStatus = useSelector<AppStateType, string>(state => state.profilePage.profileStatus);
-    const error = useSelector<AppStateType, string>(state => state.profilePage.profileError);
+    const profile = useSelector<AppStateType, ProfileType | null>(getSelectedProfile);
+    const profileStatus = useSelector<AppStateType, string>(getSelectedProfileStatus);
+    const error = useSelector<AppStateType, string>(getProfileError);
     const userId = useParams()?.userId;
+
+    useEffect(() => {
+
+        // cleanup
+        return () => {
+            dispatch(setUserProfile(null))
+        }
+    }, [])
+
     
     useEffect(() => {
         if (userId) {
@@ -72,4 +82,5 @@ const ProfileC = () => {
 }
 
 
-export default withRedirect(ProfileC);
+export default ProfileC;
+// export default withRedirect(ProfileC);

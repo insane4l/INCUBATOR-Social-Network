@@ -34,7 +34,6 @@ let initialState = {
 	    { text: "My second post.", likesCount: 0, id: 2 },
 	    { text: "Add me to friends", likesCount: 6, id: 3 }
     ],
-    newPostText: '',
     profileError: '',
     profileStatus: '',
 };
@@ -49,16 +48,10 @@ const profileReducer = (state = initialState, action: ActionsType): InitialState
                 ...state,
                 selectedProfile: action.payload.profile
             }
-        case 'sn/profile/SET_NEW_POST_MESSAGE':
-            return {
-                ...state,
-                newPostText: action.message
-            }
 		case 'sn/profile/ADD_POST':
 			return {
                 ...state,
-                posts: [...state.posts, {text: state.newPostText, likesCount: 0, id: 55}],
-                newPostText: ''
+                posts: [...state.posts, {text: action.message, likesCount: 0, id: 55}]
             }
 		case 'sn/profile/SET_PROFILE_ERROR':
 			return {
@@ -74,15 +67,13 @@ const profileReducer = (state = initialState, action: ActionsType): InitialState
 			return state;
 	}
 };
-type ActionsType = ReturnType<typeof addPostAC> | ReturnType<typeof setNewPostMessageAC>
+type ActionsType = ReturnType<typeof addPostAC>
 | ReturnType<typeof setUserProfile> | ReturnType<typeof setProfileError>
 | ReturnType<typeof setProfileStatus>;
 
-export const setUserProfile = (profile: any) => ({type: 'sn/profile/SET_USER_PROFILE', payload: {profile}} as const);
+export const setUserProfile = (profile: ProfileType | null) => ({type: 'sn/profile/SET_USER_PROFILE', payload: {profile}} as const);
 
-export const addPostAC = () => ({type: 'sn/profile/ADD_POST'} as const);
-
-export const setNewPostMessageAC = (message: string) => ({type: 'sn/profile/SET_NEW_POST_MESSAGE', message} as const);
+export const addPostAC = (message: string) => ({type: 'sn/profile/ADD_POST', message} as const);
 
 export const setProfileError = (error: string) => ({type: 'sn/profile/SET_PROFILE_ERROR', error} as const);
 

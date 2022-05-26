@@ -2,9 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { AppStateType } from '../../redux/store'
+import { getIsUserAuthorized } from '../../selectors/authSelectors'
 
 const mstp = (state: AppStateType): MapStatePropsType => ({
-    isAuth: state.auth.isUserAuthorized
+    isAuth: getIsUserAuthorized(state),
 })
 
 export const withRedirect = (WrappedComponent: React.ComponentType) => {

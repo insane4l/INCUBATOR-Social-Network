@@ -1,12 +1,14 @@
 import React, { createRef } from "react"
 import { connect } from "react-redux"
 import { NavLink } from "react-router-dom"
+import { compose } from "redux"
 import { DialogMessageType, DialogsUserType, sendMessageAC, setNewMessageBodyAC } from "../../../redux/dialogsReducer"
 import { AppStateType } from "../../../redux/store"
+import { getDialogsUsers, getNewMessageBody, getUserMessages } from "../../../selectors/dialogSelectors"
+import { withRedirect } from "../../common/withRedirect"
 import s from './Dialogs.module.css'
 
 const Dialogs: React.FC<DialogsPropsType> = ({users, userMessages, newMessageBody, setNewMessageBody, sendMessage}) => {
-
 
 	return (
 		<div className={s.dialogs}>
@@ -32,13 +34,16 @@ const User: React.FC<UserPropsType> = ({name, id}) => {
 }
 
 const mapStateToProps = (state: AppStateType) => ({
-	users: state.dialogsPage.users,
-	userMessages: state.dialogsPage.userMessages,
-	newMessageBody: state.dialogsPage.newMessageBody
+	users: getDialogsUsers(state),
+	userMessages: getUserMessages(state),
+	newMessageBody: getNewMessageBody(state),
 })
 
 
-export default connect(mapStateToProps, {sendMessage: sendMessageAC, setNewMessageBody: setNewMessageBodyAC})(Dialogs);
+export default compose<React.ComponentType>(
+	withRedirect,
+	connect(mapStateToProps, {sendMessage: sendMessageAC, setNewMessageBody: setNewMessageBodyAC}),
+)(Dialogs);
 
 type DialogsPropsType = {
 	users: DialogsUserType[]

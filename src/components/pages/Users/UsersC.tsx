@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AppStateType } from '../../../redux/store';
 import { toggleFollowed, setCurrentPage, UserType, getUsers } from '../../../redux/usersReducer';
+import * as usersSelectors from '../../../selectors/usersSelectors';
 import Users from './Users';
 
 class UsersC extends React.Component<UsersPropsType> {
@@ -39,12 +40,12 @@ class UsersC extends React.Component<UsersPropsType> {
 
 
 const mapStateToProps = (state: AppStateType): MapStatePropsType => ({
-    users: state.usersPage.users,
-    pageSize: state.usersPage.pageSize,
-    totalUsersCount: state.usersPage.totalUsersCount,
-    currentPage: state.usersPage.currentPage,
-    isLoading: state.usersPage.isLoading,
-    followingInProgress: state.usersPage.followingInProgress,
+    users: usersSelectors.getUsers(state),
+    pageSize: usersSelectors.getPageSize(state),
+    totalUsersCount: usersSelectors.getTotalUsersCount(state),
+    currentPage: usersSelectors.getCurrentPage(state),
+    isLoading: usersSelectors.getIsLoading(state),
+    followingInProgress: usersSelectors.getFollowingInProgress(state),
 })
 
 

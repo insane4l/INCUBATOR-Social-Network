@@ -1,0 +1,11 @@
+.postAddForm textarea {
+    display: block;
+    width: 300px;
+    height: 60px;
+    margin-bottom: 10px;
+    resize: none;
+}
+
+.postAddForm .errorMessage {
+    color: red;
+}
